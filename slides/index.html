@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing React</title>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section data-markdown>
+        <script type="text/template">
+          ## Testing React
+          ### Presentado por: Kevin Peña
+        </script>
+      </section>
+
+      <section>
+        <h2>Configurando el entorno</h2>
+        <div class="fragment">
+          <h4>Paquetes</h4>
+          <pre><code class="shell" data-trim>
+            npm i -D jest @testing-library/react @testing-library/jest-dom
+          </code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h4>package.json</h4>
+        <pre><code
+          data-trim data-noescape class="json"
+          data-line-numbers="2|5-7|8-10|11-14|"
+        >
+          {
+            "jest": {
+              "verbose": true,
+              "clearMocks": true,
+              "roots": [
+                "&lt;rootDir&gt;/resources/js/"
+              ],
+              "setupFilesAfterEnv": [
+                "&lt;rootDir&gt;/jest.setup.js"
+              ],
+              "moduleNameMapper": {
+                "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "&lt;rootDir&gt;/resources/js/__mocks__/fileMock.js",
+                "\\.(css|scss)$": "&lt;rootDir&gt;/resources/js/__mocks__/styleMock.js"
+              }
+            }
+          }
+        </code></pre>
+      </section>
+
+      <section data-markdown>
+        <script type="text/template">
+          #### jest.setup.js
+
+          ```js
+          import '@testing-library/jest-dom'
+          ```
+        </script>
+      </section>
+
+      <section>
+        <h2>Estructura de Archivos</h2>
+        <div style="display: flex;">
+          <pre><code data-trim>
+            ├───dist
+            └───src
+                │   App.jsx
+                │   index.html
+                │   index.js
+                │   TodoList.jsx
+                │
+                └───__tests__
+                        TodoList.jsx
+          </code></pre>
+          <div style="width: 20px"></div>
+          <pre><code data-trim class="plaintext">
+            ├───dist
+            └───src
+                    App.jsx
+                    index.html
+                    index.js
+                    TodoList.jsx
+                    TodoList.test.jsx
+          </code></pre>
+      </div>
+    </section>
+
+    <section data-markdown>
+      <script type="text/template">
+        ## Shallow rendering
+        ## vs
+        ## Deep rendering
+      </script>
+    </section>
+
+    <section data-auto-animate>
+      <h2>Shallow rendering</h2>
+      <div style="display: flex;">
+        <pre><code data-trim class="js" data-noescape data-line-numbers>
+          const todos = ['Todo 1', 'Todo 2']
+          const List = () => (&lt;&gt;
+            {todos.map(item =>
+              &lt;Todo text={item} /&gt;
+            )}
+          &lt;/&gt;)
+          const Todo = ({item}) => (
+            &lt;p&gt;
+              {item}
+              &lt;button&gt;Borrar&lt;/button&gt;
+            &lt;/p&gt;
+          )
+        </code></pre>
+        <div style="width: 20px"></div>
+        <pre data-id="code-animation"><code data-trim data-noescape data-line-numbers class="html">
+          &lt;!-- render(&lt;List /&gt;) --&gt;
+          &lt;React.Fragment&gt;
+            &lt;Todo item={'Todo 1'} /&gt;
+            &lt;Todo item={'Todo 2'} /&gt;
+          &lt;/React.Fragment&gt;
+        </code></pre>
+      </div>
+    </section>
+
+    <section data-auto-animate>
+      <h2>Deep rendering</h2>
+      <div style="display: flex;">
+        <pre><code data-trim class="js" data-noescape data-line-numbers>
+          const todos = ['Todo 1', 'Todo 2']
+          const List = () => (&lt;&gt;
+            {todos.map(item =>
+              &lt;Todo text={item} /&gt;
+            )}
+          &lt;/&gt;)
+          const Todo = ({item}) => (
+            &lt;p&gt;
+              {item}
+              &lt;button&gt;Borrar&lt;/button&gt;
+            &lt;/p&gt;
+          )
+        </code></pre>
+        <div style="width: 20px"></div>
+        <pre data-id="code-animation"><code data-trim data-noescape data-line-numbers class="html">
+          &lt;!-- render(&lt;List /&gt;) --&gt;
+          &lt;p&gt;
+            Todo 1
+            &lt;button&gt;Borrar&lt;/button&gt;
+          &lt;/p&gt;
+          &lt;p&gt;
+            Todo 2
+            &lt;button&gt;Borrar&lt;/button&gt;
+          &lt;/p&gt;
+
+        </code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h2 style="text-transform: none;">@testing-library/react</h2>
+      <div class="fragment">
+        <ul>
+          <li>Deep rendering</li>
+          <li>Unit/Integration testing</li>
+          <li>Sistema de Queries</li>
+        </ul>
+      </div>
+    </section>
+
+    <section data-auto-animate>
+      <h3>Ejemplo básico</h3>
+      <pre data-id="code-animation"><code data-trim data-noescape class="js" data-line-numbers>
+        // todo.jsx
+
+        const Todo = ({todo}) =&gt; (
+          &lt;&gt;
+            &lt;input
+              type=&quot;checkbox&quot;
+              value={todo.done}
+              onChange={e =&gt; onChange(e.target.checked)}
+            /&gt;
+            &lt;p&gt;{todo.text}&lt;/p&gt;
+          &lt;/&gt;
+        )
+
+        export default Todo
+      </code></pre>
+    </section>
+
+    <section data-auto-animate>
+      <h3>Ejemplo básico</h3>
+      <pre data-id="code-animation"><code data-trim data-noescape class="js" data-line-numbers="|4|5|7-14|8-10|16-19|8-10|12-13">
+        // todo.test.jsx
+
+        import React from 'react'
+        import { render } from '@testing-library/react'
+        import Todo from './Todo'
+
+        it('shows the todo text', () => {
+          const { getByText } = render(
+            &lt;Todo todo={mockTodo} /&gt;
+          )
+
+          const todoHtmlElem = getByText(/TEST TODO/)
+          expect(todoHtmlElem).toBeInTheDocument()
+        })
+
+        const mockTodo = {
+          text: 'TEST TODO',
+          done: false,
+        }
+      </code></pre>
+    </section>
+
+    <section data-auto-animate>
+      <h3>Ejemplo básico</h3>
+      <pre data-id="code-animation"><code data-trim data-noescape class="js" data-line-numbers="16-23|">
+        // todo.test.jsx
+
+        import React from 'react'
+        import { render } from '@testing-library/react'
+        import Todo from './Todo'
+
+        it('shows the todo text', () => {
+          const { getByText } = render(
+            &lt;Todo todo={mockTodo} /&gt;
+          )
+
+          const todoHtmlElem = getByText(/TEST TODO/)
+          expect(todoHtmlElem).toBeInTheDocument()
+        })
+
+        it('shows the checkbox as checked when the todo is done', () => {
+          const { getByRole } = render(
+            &lt;Todo todo={{...mockTodo, done: true}} /&gt;
+          )
+
+          const doneCheckbox = getByRole('checkbox')
+          expect(doneCheckbox).toBeChecked()
+        })
+
+        const mockTodo = {
+          text: 'TEST TODO',
+          done: false,
+        }
+      </code></pre>
+    </section>
+
+    <section data-auto-animate>
+      <h3>Ejemplo básico</h3>
+      <pre data-id="code-animation"><code data-trim data-noescape class="js" data-line-numbers="7-11|14|21-25">
+        // todo.test.jsx
+
+        import React from 'react'
+        import { render } from '@testing-library/react'
+        import Todo from './Todo'
+
+        const setup = (propsOverride = {}) => {
+          return render(
+            &lt;Todo todo={mockTodo} {...propsOverride} /&gt;
+          )
+        }
+
+        it('shows the todo text', () => {
+          const { getByText } = setup()
+
+          const todoHtmlElem = getByText(/TEST TODO/)
+          expect(todoHtmlElem).toBeInTheDocument()
+        })
+
+        it('shows the checkbox as checked when the todo is done', () => {
+          const todo = {
+            ...mockTodo,
+            done: true,
+          }
+          const { getByRole } = setup({todo})
+
+          const doneCheckbox = getByRole('checkbox')
+          expect(doneCheckbox).toBeChecked()
+        })
+
+        const mockTodo = {
+          text: 'TEST TODO',
+          done: false,
+        }
+      </code></pre>
+    </section>
+
+    <section>
+      <h2>Snapshot testing</h2>
+      <div style="display: flex;">
+        <pre><code data-trim data-noescape class="js">
+          const BlockButton = (props) =&gt; {
+            return (
+              &lt;button
+                style={{display: 'block'}}
+                {...props}
+              /&gt;
+            )
+          }
+        </code></pre>
+        <div style="width: 20px"></div>
+        <pre><code data-trim data-noescape class="js">
+          it('matches snapshot', () =&gt; {
+            const { toJson } = render(
+              &lt;BlockButton&gt;Holi&lt;/BlockButton&gt;
+            )
+            expect(toJson())
+              .toMatchInlineSnapshot()
+          })
+        </code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>Miremos esto en acción</h2>
+      <img id="do-it-live" style="min-height: 400px;">
+    </section>
+
+    </div>
+  </div>
+</body>
+</html>

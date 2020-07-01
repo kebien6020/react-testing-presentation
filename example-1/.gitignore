@@ -1,0 +1,4 @@
+.vscode
+db.json
+client/dist
+node_modules
