@@ -10,6 +10,7 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  devtool: 'eval-source-map',
   module: {
     rules: [
       {
@@ -18,7 +19,11 @@ module.exports = {
       },
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
         use: [
           {
             loader: 'file-loader',

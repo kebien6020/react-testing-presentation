@@ -2,17 +2,19 @@ import React from 'react'
 import { Container, Paper, TextField, styled, IconButton, Checkbox, FormControlLabel, Divider } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import DeleteIcon from '@material-ui/icons/Delete'
+import Logo from './logo-2.svg'
 
 const TodoList = () => {
   const todos = [{ id: '1', name: 'Holi', checked: false }]
 
   return (
-    <Container maxWidth='sm'>
+    <Wrapper>
+      <StyledLogo />
       <TodoInput />
       {todos && todos.length > 0 && <>
         <ExistingTodos todos={todos} />
       </>}
-    </Container>
+    </Wrapper>
   )
 }
 
@@ -57,6 +59,10 @@ const Todo = (props) => {
   )
 }
 
+const Wrapper = styled((props) => <Container maxWidth='sm' {...props}/>)(({ theme }) => ({
+  paddingTop: theme.spacing(3),
+}))
+
 const TodoWrapper = styled('div')({
   display: 'flex',
   alignItems: 'center',
@@ -81,5 +87,12 @@ const ListPaper = styled(Paper)(({ theme }) => ({
     display: 'none',
   },
 }))
+
+const StyledLogo = styled(Logo)({
+  height: '5rem',
+  display: 'block',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+})
 
 export default TodoList
